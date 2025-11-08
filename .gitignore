@@ -1,0 +1,96 @@
+# Build results
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+[Tt]est[Rr]esults/
+[Rr]eports/
+
+# Rider / VS Code settings
+.idea/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# NuGet packages
+*.nupkg
+*.snupkg
+*.nuspec
+# If you use packages.config
+packages/
+# For newer projects with PackageReference
+**/packages/*
+!**/packages/build/
+.nuget/
+*.dll
+*.pdb
+*.xml
+
+# Build logs
+*.log
+*.tlog
+*.lastcodeanalysissucceeded
+
+# Auto-generated files
+Generated Files/
+*.generated.cs
+
+# Test-related
+*.trx
+*.coverage
+*.coveragexml
+*.testsettings
+*.runsettings
+
+# Selenium-related temp files
+chromedriver.log
+geckodriver.log
+Reports/Logs/
+Screenshots/
+AllureResults/
+AllureReport/
+
+# OS junk
+[Tt]humbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+*.swp
+*.tmp
+
+# Publish artifacts
+publish/
+*.pubxml
+*.publishproj
+
+# Local configurations
+appsettings.Development.json
+appsettings.Local.json
+.env
+*.cache
+*.local
+
+# VS-specific folders
+.vs/
+*.dbmdl
+*.jfm
+
+# ReSharper / Rider
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# Backup and temp
+~$*
+*.bak
+*.old
+*.tmp
+*.temp
+*.log
+*.orig
+
+# JetBrains Rider
+.idea/
+*.sln.iml
