@@ -3,16 +3,18 @@ using log4net.Appender;
 using log4net.Layout;
 using log4net.Repository.Hierarchy;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Core.Logging
 {
 	public static class Log4NetConfig
 	{
 		private static bool _isConfigured;
+
+		public static ILog GetLogger(Type type)
+		{
+			Configure();
+			return LogManager.GetLogger(type);
+		}
 
 		public static void Configure()
 		{
@@ -21,16 +23,44 @@ namespace Core.Logging
 
 			var hierarchy = (Hierarchy)LogManager.GetRepository();
 
-			var patternLayout = new PatternLayout
+			var layout = new PatternLayout
 			{
 				ConversionPattern = "[%date{HH:mm:ss}] [%level] %message%newline"
 			};
-			patternLayout.ActivateOptions();
+			layout.ActivateOptions();
 
-			var consoleAppender = new ConsoleAppender
+			var consoleAppender = new ColoredConsoleAppender
 			{
-				Layout = patternLayout
+				Layout = layout
 			};
+
+			consoleAppender.AddMapping(new ColoredConsoleAppender.LevelColors
+			{
+				Level = log4net.Core.Level.Debug,
+				ForeColor = ColoredConsoleAppender.Colors.Green
+			});
+			consoleAppender.AddMapping(new ColoredConsoleAppender.LevelColors
+			{
+				Level = log4net.Core.Level.Info,
+				ForeColor = ColoredConsoleAppender.Colors.White
+			});
+			consoleAppender.AddMapping(new ColoredConsoleAppender.LevelColors
+			{
+				Level = log4net.Core.Level.Warn,
+				ForeColor = ColoredConsoleAppender.Colors.Yellow | ColoredConsoleAppender.Colors.HighIntensity
+			});
+			consoleAppender.AddMapping(new ColoredConsoleAppender.LevelColors
+			{
+				Level = log4net.Core.Level.Error,
+				ForeColor = ColoredConsoleAppender.Colors.Red | ColoredConsoleAppender.Colors.HighIntensity
+			});
+			consoleAppender.AddMapping(new ColoredConsoleAppender.LevelColors
+			{
+				Level = log4net.Core.Level.Fatal,
+				ForeColor = ColoredConsoleAppender.Colors.White,
+				BackColor = ColoredConsoleAppender.Colors.Red
+			});
+
 			consoleAppender.ActivateOptions();
 
 			hierarchy.Root.AddAppender(consoleAppender);
@@ -38,12 +68,6 @@ namespace Core.Logging
 			hierarchy.Configured = true;
 
 			_isConfigured = true;
-		}
-
-		public static ILog GetLogger(Type type)
-		{
-			Configure();
-			return LogManager.GetLogger(type);
 		}
 	}
 }
