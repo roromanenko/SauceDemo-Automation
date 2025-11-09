@@ -1,16 +1,14 @@
 ﻿using Core.Config;
 using OpenQA.Selenium;
-using static System.Net.Mime.MediaTypeNames;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Pages
 {
 	public class LoginPage : BasePage
 	{
-		private readonly By UsernameField = By.Id("user-name");
-		private readonly By PasswordField = By.Id("password");
-		private readonly By LoginButton = By.Id("login-button");
-		private readonly By ErrorMessage = By.CssSelector("[data-test='error']");
+		private readonly By UsernameField = By.XPath("//input[@id='user-name']");
+		private readonly By PasswordField = By.XPath("//input[@id='password']");
+		private readonly By LoginButton = By.XPath("//input[@id='login-button']");
+		private readonly By ErrorMessage = By.XPath("//*[@data-test='error']");
 
 		public LoginPage(IWebDriver driver)
 			: base(driver)
@@ -50,14 +48,18 @@ namespace Pages
 		public LoginPage ClearUsername()
 		{
 			Logger.Info("Clearing username field");
-			Find(UsernameField).Clear();
+			var username = Find(UsernameField);
+			username.SendKeys(Keys.Control + "a");
+			username.SendKeys(Keys.Delete);
 			return this;
 		}
 
 		public LoginPage ClearPassword()
 		{
 			Logger.Info("Clearing password field");
-			Find(PasswordField).Clear();
+			var password = Find(PasswordField);
+			password.SendKeys(Keys.Control + "a");
+			password.SendKeys(Keys.Delete);
 			return this;
 		}
 
@@ -77,16 +79,6 @@ namespace Pages
 			ClickLogin();
 
 			return new DashboardPage(Driver);
-		}
-
-		public LoginPage LoginWithInvalidCredentials(string username, string password)
-		{
-			Logger.Info("Attempting login with invalid credentials");
-			EnterUsername(username);
-			EnterPassword(password);
-			ClickLogin();
-
-			return this;
 		}
 
 		#endregion

@@ -2,7 +2,7 @@
 using log4net.Appender;
 using log4net.Layout;
 using log4net.Repository.Hierarchy;
-using System;
+using System.Text;
 
 namespace Core.Logging
 {
@@ -18,6 +18,8 @@ namespace Core.Logging
 
 		public static void Configure()
 		{
+			Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
 			if (_isConfigured)
 				return;
 
@@ -33,33 +35,6 @@ namespace Core.Logging
 			{
 				Layout = layout
 			};
-
-			consoleAppender.AddMapping(new ColoredConsoleAppender.LevelColors
-			{
-				Level = log4net.Core.Level.Debug,
-				ForeColor = ColoredConsoleAppender.Colors.Green
-			});
-			consoleAppender.AddMapping(new ColoredConsoleAppender.LevelColors
-			{
-				Level = log4net.Core.Level.Info,
-				ForeColor = ColoredConsoleAppender.Colors.White
-			});
-			consoleAppender.AddMapping(new ColoredConsoleAppender.LevelColors
-			{
-				Level = log4net.Core.Level.Warn,
-				ForeColor = ColoredConsoleAppender.Colors.Yellow | ColoredConsoleAppender.Colors.HighIntensity
-			});
-			consoleAppender.AddMapping(new ColoredConsoleAppender.LevelColors
-			{
-				Level = log4net.Core.Level.Error,
-				ForeColor = ColoredConsoleAppender.Colors.Red | ColoredConsoleAppender.Colors.HighIntensity
-			});
-			consoleAppender.AddMapping(new ColoredConsoleAppender.LevelColors
-			{
-				Level = log4net.Core.Level.Fatal,
-				ForeColor = ColoredConsoleAppender.Colors.White,
-				BackColor = ColoredConsoleAppender.Colors.Red
-			});
 
 			consoleAppender.ActivateOptions();
 
