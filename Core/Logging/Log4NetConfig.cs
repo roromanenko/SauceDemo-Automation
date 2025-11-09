@@ -2,11 +2,7 @@
 using log4net.Appender;
 using log4net.Layout;
 using log4net.Repository.Hierarchy;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Core.Logging
 {
@@ -14,23 +10,32 @@ namespace Core.Logging
 	{
 		private static bool _isConfigured;
 
+		public static ILog GetLogger(Type type)
+		{
+			Configure();
+			return LogManager.GetLogger(type);
+		}
+
 		public static void Configure()
 		{
+			Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
 			if (_isConfigured)
 				return;
 
 			var hierarchy = (Hierarchy)LogManager.GetRepository();
 
-			var patternLayout = new PatternLayout
+			var layout = new PatternLayout
 			{
 				ConversionPattern = "[%date{HH:mm:ss}] [%level] %message%newline"
 			};
-			patternLayout.ActivateOptions();
+			layout.ActivateOptions();
 
-			var consoleAppender = new ConsoleAppender
+			var consoleAppender = new ColoredConsoleAppender
 			{
-				Layout = patternLayout
+				Layout = layout
 			};
+
 			consoleAppender.ActivateOptions();
 
 			hierarchy.Root.AddAppender(consoleAppender);
@@ -38,12 +43,6 @@ namespace Core.Logging
 			hierarchy.Configured = true;
 
 			_isConfigured = true;
-		}
-
-		public static ILog GetLogger(Type type)
-		{
-			Configure();
-			return LogManager.GetLogger(type);
 		}
 	}
 }

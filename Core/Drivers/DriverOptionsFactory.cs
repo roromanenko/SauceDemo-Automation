@@ -1,7 +1,6 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
-using OpenQA.Selenium.Interactions;
 
 namespace Core.Drivers
 {
@@ -20,6 +19,8 @@ namespace Core.Drivers
 			return options;
 		}
 
+		#region Chrome Options
+
 		public static DriverOptions CreateChromeOptions()
 		{
 			var options = new ChromeOptions();
@@ -32,6 +33,10 @@ namespace Core.Drivers
 			return options;
 		}
 
+		#endregion
+
+		#region Firefox Options
+
 		public static DriverOptions CreateFirefoxOptions()
 		{
 			var options = new FirefoxOptions();
@@ -43,5 +48,7 @@ namespace Core.Drivers
 
 			return options;
 		}
+
+		#endregion
 	}
 }
