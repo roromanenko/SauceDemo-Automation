@@ -20,8 +20,7 @@ namespace Pages
 
 		public LoginPage Open()
 		{
-			string url = TestConfig.BaseUrl;
-			GoToUrl(url);
+			GoToUrl(TestConfig.BaseUrl);
 			return this;
 		}
 
@@ -31,52 +30,41 @@ namespace Pages
 
 		public LoginPage EnterUsername(string username)
 		{
-			string logMessage = $"Entering username: {username}";
-			Logger.Info(logMessage);
 			Type(UsernameField, username);
 			return this;
 		}
 
 		public LoginPage EnterPassword(string password)
 		{
-			string logMessage = $"Entering password: {password}";
-			Logger.Info(logMessage);
 			Type(PasswordField, password);
 			return this;
 		}
 
 		public LoginPage ClearUsername()
 		{
-			Logger.Info("Clearing username field");
-			var username = Find(UsernameField);
-			username.SendKeys(Keys.Control + "a");
-			username.SendKeys(Keys.Delete);
+			ClearField(UsernameField);
 			return this;
 		}
 
 		public LoginPage ClearPassword()
 		{
-			Logger.Info("Clearing password field");
-			var password = Find(PasswordField);
-			password.SendKeys(Keys.Control + "a");
-			password.SendKeys(Keys.Delete);
+			ClearField(PasswordField);
 			return this;
 		}
 
 		public LoginPage ClickLogin()
 		{
-			Logger.Info("Clicking login button");
 			Click(LoginButton);
 			return this;
 		}
 
 		public DashboardPage LoginAs(string username, string password)
 		{
-			string logMessage = $"Logging in as: {username}";
-			Logger.Info(logMessage);
-			EnterUsername(username);
-			EnterPassword(password);
-			ClickLogin();
+
+
+			EnterUsername(username)
+				.EnterPassword(password)
+				.ClickLogin();
 
 			return new DashboardPage(Driver);
 		}
@@ -92,7 +80,6 @@ namespace Pages
 
 		public string GetErrorMessageText()
 		{
-			Logger.Debug("Getting error message text");
 			return GetText(ErrorMessage);
 		}
 

@@ -26,6 +26,7 @@ namespace Tests.Tests
 		public void Dispose()
 		{
 			Logger.Info("Test finished");
+			GC.SuppressFinalize(this);
 		}
 	}
 }

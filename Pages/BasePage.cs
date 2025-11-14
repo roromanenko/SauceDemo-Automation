@@ -29,14 +29,11 @@ namespace Pages
 
 		public void GoToUrl(string url)
 		{
-			string logMessage = $"Opening page: {url}";
-			Logger.Info(logMessage);
 			Driver.Navigate().GoToUrl(url);
 		}
 
 		public void Refresh()
 		{
-			Logger.Debug("Refreshing page");
 			Driver.Navigate().Refresh();
 		}
 
@@ -48,13 +45,25 @@ namespace Pages
 		{
 			try
 			{
-				string logMessage = $"Searching for element: {locator}";
-				Logger.Debug(logMessage);
 				return Driver.FindElement(locator);
 			}
 			catch (NoSuchElementException ex)
 			{
 				string errorMessage = $"Element not found: {locator}";
+				Logger.Error(errorMessage, ex);
+				throw;
+			}
+		}
+
+		protected IReadOnlyCollection<IWebElement> FindAll(By locator)
+		{
+			try
+			{
+				return Driver.FindElements(locator);
+			}
+			catch (NoSuchElementException ex)
+			{
+				string errorMessage = $"Elements not found: {locator}";
 				Logger.Error(errorMessage, ex);
 				throw;
 			}
@@ -66,31 +75,43 @@ namespace Pages
 
 		protected void Click(By locator)
 		{
-			string logMessage = $"Clicking element: {locator}";
-			Logger.Info(logMessage);
 			var element = Find(locator);
 			element.Click();
 		}
 
 		protected void Type(By locator, string text)
 		{
-			string logMessage = $"Typing '{text}' into element: {locator}";
-			Logger.Info(logMessage);
 			var element = Find(locator);
 			element.Clear();
 			element.SendKeys(text);
 		}
 
+		protected void ClearField(By locator)
+		{
+			var element = Find(locator);
+			element.SendKeys(Keys.Control + "a");
+			element.SendKeys(Keys.Delete);
+		}
+
+		#endregion
+
+		#region Element State
+
 		protected string GetText(By locator)
 		{
-			string logMessage = $"Getting text from element: {locator}";
-			Logger.Debug(logMessage);
 			return Find(locator).Text;
 		}
 
 		protected bool IsElementDisplayed(By locator)
 		{
-			return Find(locator).Displayed;
+			try
+			{
+				return Find(locator).Displayed;
+			}
+			catch (NoSuchElementException)
+			{
+				return false;
+			}
 		}
 
 		#endregion

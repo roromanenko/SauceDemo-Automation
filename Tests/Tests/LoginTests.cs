@@ -40,6 +40,7 @@ namespace Tests.Tests
 			// Assert
 			_loginPage.IsAt().Should().BeTrue("Page should be LoginPage after clicking login with empty fields");
 			_loginPage.IsErrorMessageDisplayed().Should().BeTrue("Error message should be visible after clicking login with empty fields");
+
 			var errorMessage = _loginPage.GetErrorMessageText();
 			errorMessage.Should().Contain("Epic sadface: Username is required",
 				"Error should indicate that username is required");
@@ -70,6 +71,7 @@ namespace Tests.Tests
 			// Assert
 			_loginPage.IsAt().Should().BeTrue("Page should be LoginPage after clicking login with empty fields");
 			_loginPage.IsErrorMessageDisplayed().Should().BeTrue("Error message should be visible after clicking login with empty fields");
+
 			var errorMessage = _loginPage.GetErrorMessageText();
 			errorMessage.Should().Contain("Epic sadface: Password is required",
 				"Error should indicate that password is required");
@@ -100,6 +102,34 @@ namespace Tests.Tests
 				"Page title should be 'Swag Labs' after successful login");
 
 			Logger.Info("UC-3 Test PASSED: Successfully logged in and verified dashboard title");
+		}
+
+		/// <summary>
+		/// UC-4: Test Login form with locked out user<br/>
+		/// 1. Type credentials for a locked out user<br/>
+		/// 2. Enter correct password<br/>
+		/// 3. Click on Login<br/>
+		/// 4. Verify error message: "Epic sadface: Sorry, this user has been locked out."
+		/// </summary>
+		[Theory]
+		[MemberData(nameof(LoginTestData.GetLockedOutUsers), MemberType = typeof(LoginTestData))]
+		public void UC4_LoginWithLockedOutUser_ShouldShowLockedOutError(string username, string password)
+		{
+			//Assert
+			_loginPage.Open();
+
+			//Act
+			_loginPage.LoginAs(username, password);
+
+			//Assert
+			_loginPage.IsAt().Should().BeTrue("Page should remain on LoginPage when user is locked out");
+			_loginPage.IsErrorMessageDisplayed().Should().BeTrue("Error message should be visible for locked out user");
+			
+			var errorMessage = _loginPage.GetErrorMessageText();
+			errorMessage.Should().Contain("Epic sadface: Sorry, this user has been locked out.",
+				"Error should indicate that user is locked out");
+
+			Logger.Info("UC-4 Test PASSED: Locked out user error displayed correctly");
 		}
 	}
 }

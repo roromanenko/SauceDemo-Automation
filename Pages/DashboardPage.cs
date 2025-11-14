@@ -19,13 +19,11 @@ namespace Pages
 
 		public string GetHeaderText()
 		{
-			Logger.Debug("Getting dashboard header text");
 			return GetText(Title);
 		}
 
 		public bool IsAt()
 		{
-			Logger.Debug("Verifying we are on Dashboard page");
 			return IsElementDisplayed(InventoryContainer)
 				&& IsElementDisplayed(BurgerMenu);
 		}
@@ -36,14 +34,13 @@ namespace Pages
 
 		public DashboardPage OpenBurgerMenu()
 		{
-			Logger.Info("Opening burger menu");
 			Click(BurgerMenu);
 			return this;
 		}
 
 		public LoginPage Logout()
 		{
-			Logger.Info("Logging out");
+			OpenBurgerMenu();
 			Click(LogoutLink);
 			return new LoginPage(Driver);
 		}

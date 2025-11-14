@@ -2,20 +2,33 @@
 {
 	public static class LoginTestData
 	{
-		public static IEnumerable<object[]> GetValidUsers()
+		public static TheoryData<string, string> GetValidUsers()
 		{
-			yield return new object[] { "standard_user", "secret_sauce" };
-			yield return new object[] { "locked_out_user", "secret_sauce" };
-			yield return new object[] { "problem_user", "secret_sauce" };
-			yield return new object[] { "performance_glitch_user", "secret_sauce" };
-			yield return new object[] { "error_user", "secret_sauce" };
-			yield return new object[] { "visual_user", "secret_sauce" };
+			return new TheoryData<string, string>
+			{
+				{ "standard_user", "secret_sauce" },
+				{ "problem_user", "secret_sauce" },
+				{ "performance_glitch_user", "secret_sauce" },
+				{ "error_user", "secret_sauce" },
+				{ "visual_user", "secret_sauce" }
+			};
 		}
 
-		public static IEnumerable<object[]> GetInvalidUsers()
+		public static TheoryData<string, string> GetInvalidUsers()
 		{
-			yield return new object[] { "admin", "admin_password" };
-			yield return new object[] { "JohnDoe", "secret_password" };
+			return new TheoryData<string, string>
+			{
+				{ "admin", "admin_password" },
+				{ "JohnDoe", "secret_password" }
+			};
+		}
+
+		public static TheoryData<string, string> GetLockedOutUsers()
+		{
+			return new TheoryData<string, string>
+			{
+				{ "locked_out_user", "secret_sauce" }
+			};
 		}
 	}
 }
