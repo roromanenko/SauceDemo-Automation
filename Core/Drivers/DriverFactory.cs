@@ -1,6 +1,7 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
+using System.Collections.Concurrent;
 using WebDriverManager;
 using WebDriverManager.DriverConfigs.Impl;
 
@@ -8,8 +9,7 @@ namespace Core.Drivers
 {
 	public sealed class DriverFactory
 	{
-		private static readonly Dictionary<string, Lazy<IWebDriver>> _drivers = new();
-		private static readonly object _lock = new object();
+		private static readonly ConcurrentDictionary<string, Lazy<IWebDriver>> _drivers = new();
 
 		private DriverFactory() { }
 
@@ -20,35 +20,19 @@ namespace Core.Drivers
 		/// <returns>The singleton WebDriver instance</returns>
 		public static IWebDriver GetDriver(string browserName)
 		{
-			if (!_drivers.ContainsKey(browserName))
-			{
-				lock (_lock)
-				{
-					if (!_drivers.ContainsKey(browserName))
-					{
-						var driver = new Lazy<IWebDriver>(
-							() => CreateDriver(browserName),
-							LazyThreadSafetyMode.ExecutionAndPublication
-						);
-
-						_drivers.Add(browserName, driver);
-					}
-				}
-			}
-
-			return _drivers[browserName].Value;
+			return _drivers.GetOrAdd(browserName, CreateDriver).Value;
 		}
 
 		#region Create Driver
 
-		private static IWebDriver CreateDriver(string browserName)
+		private static Lazy<IWebDriver> CreateDriver(string browserName)
 		{
 			var options = DriverOptionsFactory.GetOptions(browserName);
 
 			return browserName.ToLower() switch
 			{
-				"chrome" => CreateChromeDriver((ChromeOptions)options),
-				"firefox" => CreateFirefoxDriver((FirefoxOptions)options),
+				"chrome" => new Lazy<IWebDriver>(() => CreateChromeDriver((ChromeOptions)options), LazyThreadSafetyMode.ExecutionAndPublication),
+				"firefox" => new Lazy<IWebDriver>(() => CreateFirefoxDriver((FirefoxOptions)options), LazyThreadSafetyMode.ExecutionAndPublication),
 				_ => throw new ArgumentException($"Unsupported browser: {browserName}")
 			};
 		}
@@ -69,14 +53,15 @@ namespace Core.Drivers
 
 		public static void QuitDriver(string browserName)
 		{
-			lock (_lock)
+			if(_drivers.TryGetValue(browserName, out var webDriver))
 			{
-				if (_drivers[browserName]?.IsValueCreated == true)
+				if (webDriver.IsValueCreated)
 				{
-					_drivers[browserName].Value?.Quit();
-					_drivers[browserName].Value?.Dispose();
+					webDriver.Value?.Quit();
+					webDriver.Value?.Dispose();
 				}
-				_drivers.Remove(browserName);
+
+				_drivers.TryRemove(browserName, out _);
 			}
 		}
 
