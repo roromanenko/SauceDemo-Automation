@@ -6,6 +6,11 @@ using Xunit.Abstractions;
 
 namespace Tests.Tests
 {
+	/// <summary>
+	/// Base class for all Selenium-based tests in the test suite.<br/>
+	/// Provides common setup and teardown functionality: WebDriver initialization,
+	/// logging configuration, and test output handling.
+	/// </summary>
 	public abstract class BaseTest : IClassFixture<WebDriverFixture>, IDisposable
 	{
 		protected readonly IWebDriver Driver;
@@ -14,7 +19,7 @@ namespace Tests.Tests
 
 		protected BaseTest(WebDriverFixture fixture, ITestOutputHelper output)
 		{
-			Driver = fixture.Driver;
+			Driver = WebDriverFixture.Driver;
 			Output = output;
 
 			Log4NetConfig.Configure();

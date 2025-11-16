@@ -1,5 +1,8 @@
 ﻿namespace Tests.TestData
 {
+	/// <summary>
+	/// Provides test data for login-related test scenarios.
+	/// </summary>
 	public static class LoginTestData
 	{
 		public static TheoryData<string, string> GetValidUsers()

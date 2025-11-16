@@ -4,6 +4,10 @@ using OpenQA.Selenium.Firefox;
 
 namespace Core.Drivers
 {
+	/// <summary>
+	/// Factory for creating browser-specific WebDriver options.
+	/// Provides pre-configured options optimized for test automation.
+	/// </summary>
 	public static class DriverOptionsFactory
 	{
 		public static DriverOptions GetOptions(string browserName)
@@ -21,6 +25,9 @@ namespace Core.Drivers
 
 		#region Chrome Options
 
+		/// <summary>
+		/// Creates Chrome-specific options with settings optimized for test automation.
+		/// </summary>
 		public static DriverOptions CreateChromeOptions()
 		{
 			var options = new ChromeOptions();
@@ -37,6 +44,9 @@ namespace Core.Drivers
 
 		#region Firefox Options
 
+		/// <summary>
+		/// Creates Firefox-specific options with settings optimized for test automation.
+		/// </summary>
 		public static DriverOptions CreateFirefoxOptions()
 		{
 			var options = new FirefoxOptions();

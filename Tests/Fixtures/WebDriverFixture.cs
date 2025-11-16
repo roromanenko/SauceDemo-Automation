@@ -6,37 +6,59 @@ using OpenQA.Selenium;
 
 namespace Tests.Fixtures
 {
+	/// <summary>
+	/// Fixture for managing WebDriver lifecycle in tests.<br/>
+	/// Implements IDisposable for proper resource cleanup.
+	/// Uses singleton DriverFactory to share one browser instance across all tests.
+	/// </summary>
 	public class WebDriverFixture : IDisposable
 	{
 		private readonly ILog Logger;
 
-		public IWebDriver Driver { get; private set; }
+		public static IWebDriver Driver => DriverFactory.GetDriver(TestConfig.Browser);
 
 		public WebDriverFixture()
 		{
 			Log4NetConfig.Configure();
 			Logger = Log4NetConfig.GetLogger(GetType());
-			Logger.Info("Initializing WebDriverFixture");
-
-			Driver = DriverFactory.CreateDriver(TestConfig.Browser);
-			Driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(TestConfig.ImplicitWaitSeconds);
-
-			Logger.Info("WebDriver initialized successfully");
-		}
-
-		public void Dispose()
-		{
-			Logger.Info("Disposing WebDriverFixture");
 
 			try
 			{
-				Driver?.Quit();
-				Driver?.Dispose();
-				Logger.Info("WebDriver disposed successfully");
+				var driver = Driver;
+
+				if (!DriverFactory.IsDriverInitialized())
+				{
+					driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(TestConfig.ImplicitWaitSeconds);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logger.Error("Failed to initialize WebDriver", ex);
+				throw;
+			}
+		}
+
+		/// <summary>
+		/// Disposes the WebDriver instance and performs cleanup.
+		/// Closes the browser and releases all associated resources.
+		/// </summary>
+		public void Dispose()
+		{
+			try
+			{
+				if (DriverFactory.IsDriverInitialized())
+				{
+					DriverFactory.QuitDriver();
+					Logger.Info("WebDriver disposed successfully");
+				}
 			}
 			catch (Exception ex)
 			{
 				Logger.Error("Error disposing WebDriver", ex);
+			}
+			finally
+			{
+				GC.SuppressFinalize(this);
 			}
 		}
 	}
