@@ -8,7 +8,7 @@ namespace Core.Drivers
 {
 	public sealed class DriverFactory
 	{
-		private static Lazy<IWebDriver>? _lazyDriver;
+		private static readonly Dictionary<string, Lazy<IWebDriver>> _drivers = new();
 		private static readonly object _lock = new object();
 
 		private DriverFactory() { }
@@ -20,20 +20,23 @@ namespace Core.Drivers
 		/// <returns>The singleton WebDriver instance</returns>
 		public static IWebDriver GetDriver(string browserName)
 		{
-			if (_lazyDriver == null)
+			if (!_drivers.ContainsKey(browserName))
 			{
 				lock (_lock)
 				{
-					if (_lazyDriver == null)
+					if (!_drivers.ContainsKey(browserName))
 					{
-						_lazyDriver = new Lazy<IWebDriver>(
+						var driver = new Lazy<IWebDriver>(
 							() => CreateDriver(browserName),
 							LazyThreadSafetyMode.ExecutionAndPublication
 						);
+
+						_drivers.Add(browserName, driver);
 					}
 				}
 			}
-			return _lazyDriver.Value;
+
+			return _drivers[browserName].Value;
 		}
 
 		#region Create Driver
@@ -64,22 +67,22 @@ namespace Core.Drivers
 
 		#endregion
 
-		public static void QuitDriver()
+		public static void QuitDriver(string browserName)
 		{
 			lock (_lock)
 			{
-				if (_lazyDriver?.IsValueCreated == true)
+				if (_drivers[browserName]?.IsValueCreated == true)
 				{
-					_lazyDriver.Value?.Quit();
-					_lazyDriver.Value?.Dispose();
+					_drivers[browserName].Value?.Quit();
+					_drivers[browserName].Value?.Dispose();
 				}
-				_lazyDriver = null;
+				_drivers.Remove(browserName);
 			}
 		}
 
-		public static bool IsDriverInitialized()
+		public static bool IsDriverInitialized(string browserName)
 		{
-			return _lazyDriver?.IsValueCreated == true;
+			return _drivers[browserName]?.IsValueCreated == true;
 		}
 	}
 }

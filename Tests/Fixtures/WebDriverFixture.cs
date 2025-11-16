@@ -26,7 +26,7 @@ namespace Tests.Fixtures
 			{
 				var driver = Driver;
 
-				if (!DriverFactory.IsDriverInitialized())
+				if (!DriverFactory.IsDriverInitialized(TestConfig.Browser))
 				{
 					driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(TestConfig.ImplicitWaitSeconds);
 				}
@@ -46,9 +46,9 @@ namespace Tests.Fixtures
 		{
 			try
 			{
-				if (DriverFactory.IsDriverInitialized())
+				if (DriverFactory.IsDriverInitialized(TestConfig.Browser))
 				{
-					DriverFactory.QuitDriver();
+					DriverFactory.QuitDriver(TestConfig.Browser);
 					Logger.Info("WebDriver disposed successfully");
 				}
 			}
